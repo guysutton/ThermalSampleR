@@ -18,12 +18,17 @@ Please feel free to contact me (Guy Sutton) at g.sutton@ru.ac.za
 
 # Download a separate package containing all the raw CTL data
 # install_github("guysutton/CBCdata")
+````
 library(CBCdata) 
+```
 
 # Take a peek at the data 
+```
 head(coreid_data) 
+```
 
 # Perform bootstrap resampling 
+```
 sims <- boot_two_groups(data = coreid_data,
                         groups_col = col,
                         response = response,
@@ -31,8 +36,11 @@ sims <- boot_two_groups(data = coreid_data,
                         group2 = "Catorhintha schaffneri_NPM",
                         n_max = 49,
                         iter = 99)
-                        
+```
+
 # Plot differences between adult and nymph Catorintha schaffneri 
+```
 (plots <- plot_two_groups(x = sims,
                          n_min = 3,
                          n_max = 49))
+``` 
