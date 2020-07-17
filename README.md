@@ -15,10 +15,9 @@ Please feel free to contact me (Guy Sutton) at g.sutton@ru.ac.za
 # Example usage 
 
 # Load raw data of CTmin's for Coreid 
-
+```
 # Download a separate package containing all the raw CTL data
 # install_github("guysutton/CBCdata")
-````
 library(CBCdata) 
 ```
 
