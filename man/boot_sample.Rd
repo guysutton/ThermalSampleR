@@ -4,12 +4,24 @@
 \alias{boot_sample}
 \title{Bootstrap sampling to calculate summary statistics of CTL values}
 \usage{
-boot_sample(data, groups_col, n_max, n_min = 3, iter = 29, response)
+boot_sample(
+  data,
+  groups_col,
+  groups_which,
+  n_max,
+  n_min = 3,
+  iter = 29,
+  response
+)
 }
 \arguments{
-\item{data}{Data frame contain raw data.}
+\item{data}{Data frame contain raw data. Must contain a column with a population
+identifier (e.g. population ID), and a column containin critical
+thermal limit data (e.g. temperatures at which critical limits are reached).}
 
 \item{groups_col}{Factor. Column containing name(s) of population(s) of interest}
+
+\item{groups_which}{Character. Which population should be analysed?}
 
 \item{n_max}{Numeric. Maximum sample size to extrapolate simulations.}
 
@@ -23,13 +35,14 @@ boot_sample(data, groups_col, n_max, n_min = 3, iter = 29, response)
 A data frame of CTL summary statistics from bootstrap resamples
 }
 \description{
-Calculate mean and CI's of CTL for one or more groups
+Calculate mean and CI's of CTL for a single population
 }
 \examples{
 head(coreid_data)
-sims <- boot_two_groups(data = coreid_data,
-                        groups_col = col,
-                        response = response,
-                        n_max = 49,
-                        iter = 99)
+sims <- boot_sample(data = coreid_data,
+                    groups_col = col,
+                    groups_which = "Catorhintha schaffneri_APM",
+                    response = response,
+                    n_max = 49,
+                    iter = 99)
 }

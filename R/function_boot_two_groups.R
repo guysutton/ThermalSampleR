@@ -22,11 +22,21 @@
 #' @param response Numeric. Column containing thermal limit data for individual samples.
 #' @param group1 String. Name of first population to compare.
 #' @param group2 String. Name of second population to compare.
-#' @import purrr
-#' @import tidyr
-#' @import dplyr
-#' @import stats
-#' @import magrittr
+#' @importFrom magrittr %>%
+#' @importFrom purrr map
+#' @importFrom purrr map2
+#' @importFrom tidyr nest
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr left_join
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+#' @importFrom dplyr summarise
+#' @importFrom dplyr sample_n
+#' @importFrom stats qt
+#' @importFrom stats sd
+#' @importFrom tidyr unnest
+#' @importFrom tidyr crossing
 #' @import rlang
 #' @return A data frame of bootstrap resamples
 #' @examples
@@ -63,11 +73,11 @@ boot_two_groups <- function(data,
     # Added sampling with replacement to code below
     dplyr::mutate(sample_data = purrr::map2(data,
                                             sample_size,
-                                            ~dplyr::sample_n(.x, .y,
+                                            ~ dplyr::sample_n(.x, .y,
                                                              # Sample with replacement
                                                              replace = TRUE))) %>%
     dplyr::mutate(calc = purrr::map(sample_data,
-                                    ~dplyr::summarize(.,
+                                    ~ dplyr::summarise(.,
                                                mean_val = mean( {{ response }} ),
                                                sd_val = stats::sd(( {{ response }} ))))) %>%
     dplyr::select({{ groups_col }}, sample_size, iter, calc) %>%
@@ -76,12 +86,12 @@ boot_two_groups <- function(data,
   # Add CI's to raw bootstrap samples
   boot_data <- boot_data %>%
     # Add standard errors
-    mutate(std_error = sd_val/sqrt(sample_size)) %>%
+    dplyr::mutate(std_error = sd_val/sqrt(sample_size)) %>%
     # Now find error
-    mutate(error     = stats::qt(0.975, df = sample_size - 1) * std_error) %>%
+    dplyr::mutate(error = stats::qt(0.975, df = sample_size - 1) * std_error) %>%
     # Calculate lower and upper 95% CI limits
-    mutate(lower_ci  = mean_val - error,
-           upper_ci  = mean_val + error) %>%
+    dplyr::mutate(lower_ci  = mean_val - error,
+                  upper_ci  = mean_val + error) %>%
     dplyr::ungroup()
 
   # Split data from two groups
@@ -108,7 +118,7 @@ boot_two_groups <- function(data,
 
   # Add student t CI's
   comb_data <- comb_data %>%
-    mutate(mean_diff    = mean_val.x - mean_val.y,
+    dplyr::mutate(mean_diff    = mean_val.x - mean_val.y,
            first_term   = (sample_size - 1) * sd_val.x^2,
            second_term  = (sample_size - 1) * sd_val.y^2,
            pooled_df    = (sample_size * 2) - 2,
@@ -120,8 +130,8 @@ boot_two_groups <- function(data,
 
   # Calculate summary statistics
   comb_data_sum <- comb_data %>%
-    group_by(sample_size) %>%
-    summarise(mean_low_ci    = mean(lower_ci),
+    dplyr::group_by(sample_size) %>%
+    dplyr::summarise(mean_low_ci = mean(lower_ci),
               mean_upp_ci    = mean(upper_ci),
               mean_diff      = mean(mean_diff),
               width_ci       = mean_upp_ci - mean_low_ci,

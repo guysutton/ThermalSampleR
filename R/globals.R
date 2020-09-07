@@ -30,4 +30,9 @@ utils::globalVariables(c("sample_size",
                          "mean_low_ci",
                          "mean_upp_ci",
                          "sd_width_lower",
-                         "sd_width_upper"))
+                         "sd_width_upper",
+                         "median_pop_val",
+                         "sd_val",
+                         "id",
+                         "iter",
+                         "ci_falls"))
